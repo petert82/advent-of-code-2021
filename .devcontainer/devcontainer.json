@@ -1,0 +1,16 @@
+{
+  "name": "Elixir",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "NODE_VERSION": "none"
+    }
+  },
+  "remoteUser": "vscode",
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [4000, 4001, 5432],
+  // IDs of extensions to install when the container is created.
+  "extensions": ["jakebecker.elixir-ls"],
+  // Set default container specific settings.json values on container create.
+  "settings": {}
+}
