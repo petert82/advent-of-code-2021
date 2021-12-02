@@ -17,4 +17,18 @@ defmodule Advent.Day02Test do
 
     assert part1(input) == 150
   end
+
+  @tag :day02
+  test "part2" do
+    input = """
+    forward 5
+    down 5
+    forward 8
+    up 3
+    down 8
+    forward 2
+    """
+
+    assert part2(input) == 900
+  end
 end
