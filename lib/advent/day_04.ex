@@ -63,7 +63,7 @@ defmodule Advent.Day04.Bingo do
   def first_winning_board(%__MODULE__{} = bingo) do
     alias Advent.Day04.Board
     [num | rest] = bingo.draw
-    played_nums = [num] ++ bingo.played_nums
+    played_nums = [num | bingo.played_nums]
     played_nums_set = MapSet.new(played_nums)
 
     winning_board =
@@ -82,6 +82,59 @@ defmodule Advent.Day04.Bingo do
       _ -> {winning_board, new_bingo}
     end
   end
+
+  def last_winning_board(%__MODULE__{} = bingo) do
+    last_winning_board(bingo, [])
+  end
+
+  def last_winning_board(%__MODULE__{draw: []}, winning_boards) do
+    hd(winning_boards)
+  end
+
+  def last_winning_board(%__MODULE__{} = bingo, winning_boards) do
+    alias Advent.Day04.Board
+    [num | rest] = bingo.draw
+    played_nums = [num | bingo.played_nums]
+    played_nums_set = MapSet.new(played_nums)
+
+    indexed_boards = Enum.with_index(bingo.boards)
+
+    wins =
+      Enum.filter(indexed_boards, fn {board, _idx} ->
+        Board.find_winning_run(board, played_nums_set) != nil
+      end)
+
+    case length(wins) do
+      0 ->
+        new_bingo = %__MODULE__{
+          draw: rest,
+          boards: bingo.boards,
+          played_nums: played_nums
+        }
+
+        last_winning_board(new_bingo, winning_boards)
+
+      _ ->
+        new_winning_boards =
+          Enum.map(wins, fn {winning_board, _idx} ->
+            %{board: winning_board, played_nums: played_nums}
+          end)
+
+        win_idxs = Enum.map(wins, &elem(&1, 1))
+
+        remaining_boards =
+          Enum.reject(indexed_boards, fn {_, idx} -> Enum.any?(win_idxs, &(&1 == idx)) end)
+          |> Enum.map(&elem(&1, 0))
+
+        new_bingo = %__MODULE__{
+          draw: rest,
+          boards: remaining_boards,
+          played_nums: played_nums
+        }
+
+        last_winning_board(new_bingo, new_winning_boards ++ winning_boards)
+    end
+  end
 end
 
 defmodule Advent.Day04 do
@@ -96,7 +149,11 @@ defmodule Advent.Day04 do
     Board.score(winning_board, end_state.played_nums)
   end
 
-  def part2(_input) do
-    :unimplemented
+  def part2(input) do
+    %{board: winning_board, played_nums: played_nums} =
+      Bingo.parse(input)
+      |> Bingo.last_winning_board()
+
+    Board.score(winning_board, played_nums)
   end
 end
