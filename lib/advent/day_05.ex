@@ -1,14 +1,19 @@
 defmodule Advent.Day05 do
   def part1(input) do
+    count_overlapping_points(input, &is_not_diagonal/1)
+  end
+
+  def part2(input) do
+    count_overlapping_points(input, fn _ -> true end)
+  end
+
+  defp count_overlapping_points(input, filter_fn) do
     input
     |> parse()
-    |> Enum.filter(&is_not_diagonal/1)
+    |> Enum.filter(filter_fn)
     |> plot_lines()
     |> Enum.filter(fn {_pt, count} -> count > 1 end)
     |> length()
-  end
-
-  def part2(_input) do
   end
 
   defp parse(input) do
@@ -49,5 +54,9 @@ defmodule Advent.Day05 do
 
   defp line_points(%{start: {x1, y}, end: {x2, y}}) do
     for x <- x1..x2, do: {x, y}
+  end
+
+  defp line_points(%{start: {x1, y1}, end: {x2, y2}}) do
+    Enum.zip([x1..x2, y1..y2])
   end
 end
