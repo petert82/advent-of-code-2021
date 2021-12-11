@@ -16,8 +16,9 @@ defmodule Advent.Day07Test do
   @tag :day07
   test "part2" do
     input = """
+    16,1,2,0,4,2,7,1,2,14
     """
 
-    assert part2(input) == nil
+    assert part2(input) == 168
   end
 end
