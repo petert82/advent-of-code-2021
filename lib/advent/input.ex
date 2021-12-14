@@ -15,7 +15,7 @@ defmodule Advent.Input do
 
     if File.exists?(input_file) do
       File.open!(input_file, [:read, :utf8])
-      |> IO.read(:all)
+      |> IO.read(:eof)
     else
       raise "Input file '#{input_file}' does not exist"
     end

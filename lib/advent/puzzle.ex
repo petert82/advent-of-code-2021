@@ -5,7 +5,7 @@ defmodule Advent.Puzzle do
   `day` is expected to be a day number, with leading zero. `part` is expected to be `"1"` or `"2"`.
   """
   defmacro run_day_part(day, part) do
-    module = String.to_existing_atom("Elixir.Advent.Day#{day}")
+    module = String.to_atom("Elixir.Advent.Day#{day}")
 
     quote do
       def run(_args) do
