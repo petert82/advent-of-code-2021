@@ -13,6 +13,10 @@ defmodule Advent.Day11.FlashCounter do
     GenServer.call(pid, :get_count)
   end
 
+  def reset(pid) do
+    GenServer.call(pid, :reset)
+  end
+
   @impl true
   def init(count) do
     {:ok, count}
@@ -23,4 +27,7 @@ defmodule Advent.Day11.FlashCounter do
 
   @impl true
   def handle_call(:get_count, _from, count), do: {:reply, {:ok, count}, count}
+
+  @impl true
+  def handle_call(:reset, _from, _count), do: {:reply, {:ok, 0}, 0}
 end

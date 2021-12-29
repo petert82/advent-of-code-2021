@@ -24,6 +24,6 @@ defmodule Advent.Day11Test do
 
   @tag :day11
   test "part2" do
-    assert part2(@input) == nil
+    assert part2(@input) == 195
   end
 end

@@ -5,15 +5,25 @@ defmodule Advent.Day11 do
   def part1(input) do
     {world, flash_counter} = init_world(input)
 
-    for _i <- 1..100 do
-      tick(world)
-    end
-
-    {:ok, count} = FlashCounter.get_count(flash_counter)
-    count
+    Enum.map(1..100, fn _i -> tick(world, flash_counter) end)
+    |> Enum.sum()
   end
 
-  def part2(_input) do
+  def part2(input) do
+    {world, flash_counter} = init_world(input)
+    octopus_count = Enum.count(world)
+
+    step_count =
+      Stream.repeatedly(fn -> tick(world, flash_counter) end)
+      |> Enum.take_while(fn flash_count -> flash_count != octopus_count end)
+      # want the first step to be "step 1"
+      |> Enum.with_index(1)
+      |> Enum.to_list()
+      |> List.last()
+      |> elem(1)
+
+    # step_count is the step _before_ all the octopuses flashed together
+    step_count + 1
   end
 
   defp init_world(input) do
@@ -33,7 +43,7 @@ defmodule Advent.Day11 do
     {world, flash_counter}
   end
 
-  defp tick(world) do
+  defp tick(world, flash_counter) do
     Enum.each(world, fn {_coord, pid} ->
       :ok = Octopus.increase_energy(pid)
     end)
@@ -45,6 +55,10 @@ defmodule Advent.Day11 do
     Enum.each(world, fn {_coord, pid} ->
       :ok = Octopus.end_tick(pid)
     end)
+
+    {:ok, flash_count} = FlashCounter.get_count(flash_counter)
+    FlashCounter.reset(flash_counter)
+    flash_count
   end
 
   defp parse_values(input) do
